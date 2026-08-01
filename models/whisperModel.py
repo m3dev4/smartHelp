@@ -8,4 +8,4 @@ MODEL_NAME = os.getenv("OPENAI_WHISPER_MODEL_NAME")
 
 
 registered_model = ModelSingleton()
-model = registered_model.get(model_task="automatic-speech-recognition", model_name=MODEL_NAME)
+whisper_model = registered_model.get(model_task="automatic-speech-recognition", model_name=MODEL_NAME)

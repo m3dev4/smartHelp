@@ -1,7 +1,10 @@
 from fastapi import FastAPI
-import models.whisperModel
+from routes import ingestionsRoute
 
 app = FastAPI()
+
+app.include_router(router=ingestionsRoute.router)
+
 
 @app.get("/")
 def get_home():
