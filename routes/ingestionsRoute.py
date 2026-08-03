@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from validations.audioValidate import validate_audio
 from validations.imageValidate import validate_image
 from utils.files_manager import save_file_temp
@@ -7,22 +7,27 @@ from services.whisperService import transcriber
 from services.vitService import image_classifier
 from rag.rag import get_rag_response
 
+
 router = APIRouter(prefix="/ingestions", tags=["Ingestions"])
 
 
-
 @router.post("/support-ticket")
-async def create_ingestion_from_support_ticket(file: UploadFile = File(...)):
-    # await validate_audio(file)
-    # temp_file_path = save_file_temp(file)
-    # transcription_result = transcriber(temp_file_path, return_timestamps=True)
+async def create_ingestion_from_support_ticket(
+    audio: UploadFile = File(...),
+    image: UploadFile = File(...),
+    description: str | None = Form(None),
+):
+    await validate_audio(audio)
+    validate_image(image)
+    audio_path = save_file_temp(audio)
+    image_path = save_file_temp_img(image)
 
-    # return {
-    #     "transcription": transcription_result["text"],
-    #     "policy_rule_applied": get_rag_response(transcription_result["text"]),
-    # }
+    audio_transcription = transcriber(audio_path)
+    image_classification = image_classifier(image_path)
 
-    validate_image(file)
-    temp_file_path = save_file_temp_img(file)
-    classification_result = image_classifier(temp_file_path)
-    return {"classification_result": classification_result}
+    return {
+        "transcription": audio_transcription["text"],
+        "defect_detected": image_classification,
+        "policy_rule_applied": get_rag_response(audio_transcription["text"]),
+        "diagnostic_status": "",
+    }
