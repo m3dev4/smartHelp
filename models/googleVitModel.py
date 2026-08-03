@@ -11,5 +11,3 @@ registered_model = ModelSingleton()
 google_vit_model = registered_model.get(
     model_task="Image-Text-to-Text", model_name=MODEL_NAME, provider=MODEL_PROVIDER
 )
-
-print(f"Google ViT model loaded: {google_vit_model}")

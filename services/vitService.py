@@ -48,13 +48,11 @@ def image_classifier(image_path: str):
                     },
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": f"data:{mime_type};base64,{base64_image}"
-                        },
+                        "image_url": {"url": f"data:{mime_type};base64,{base64_image}"},
                     },
                 ],
             }
-        ]
+        ],
     )
     content = response.choices[0].message.content
     if content:
@@ -69,8 +67,8 @@ def image_classifier(image_path: str):
 
         try:
             import json
+
             return json.loads(cleaned_content)
         except Exception:
             return cleaned_content
     return content
-
