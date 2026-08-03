@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MODEL_NAME = os.getenv("OPENAI_WHISPER_MODEL_NAME")
+MODEL_PROVIDER = os.getenv("MODEL_PROVIDER")
 
 
 registered_model = ModelSingleton()
-whisper_model = registered_model.get(model_task="automatic-speech-recognition", model_name=MODEL_NAME)
+whisper_model = registered_model.get(
+    model_task="automatic-speech-recognition", model_name=MODEL_NAME, provider=MODEL_PROVIDER 
+)
