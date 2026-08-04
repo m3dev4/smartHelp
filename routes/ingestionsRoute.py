@@ -7,7 +7,6 @@ from services.whisperService import transcriber
 from services.vitService import image_classifier
 from rag.rag import get_rag_response
 
-
 router = APIRouter(prefix="/ingestions", tags=["Ingestions"])
 
 
@@ -25,9 +24,11 @@ async def create_ingestion_from_support_ticket(
     audio_transcription = transcriber(audio_path)
     image_classification = image_classifier(image_path)
 
+    rag_result = get_rag_response(audio_transcription["text"])
+
     return {
         "transcription": audio_transcription["text"],
         "defect_detected": image_classification,
-        "policy_rule_applied": get_rag_response(audio_transcription["text"]),
-        "diagnostic_status": "",
+        "policy_rule_applied": rag_result["message"],
+        "diagnostic_status": rag_result["status"],
     }
