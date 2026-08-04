@@ -9,6 +9,7 @@ from langchain_openai import ChatOpenAI
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import json
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PDF_PATH = (
@@ -44,26 +45,30 @@ retriever = vectorStore.as_retriever(search_kwargs={"k": 2})
 
 # ---------------------------- Création de la chaîne de récupération ----------------------------------------
 prompt = ChatPromptTemplate.from_template("""
-        Tu es un assistant spécialisé dans l'analyse des réclamations clients.
+Tu es un assistant spécialisé dans l'analyse des réclamations clients.
 
-        Tu disposes uniquement des informations contenues dans le contexte ci-dessous, extrait du règlement interne de l'entreprise.
+Contexte :
+{context}
 
-        Contexte :
-        {context}
+Réclamation :
+{input}
 
-        Réclamation du client :
-        {input}
+Consignes :
+- Réponds uniquement avec les informations du contexte.
+- Si aucune règle ne correspond, réponds :
 
-        Consignes :
-        - Réponds uniquement en te basant sur le contexte fourni.
-        - N'invente jamais d'informations.
-        - Si le contexte contient la règle correspondante, résume-la de manière claire et concise.
-        - Si aucune règle ne correspond à la réclamation ou que l'information est absente du contexte, réponds exactement :
+{{
+  "status": "À vérifier",
+  "message": "Information introuvable dans le règlement."
+}}
 
-        "Information introuvable dans le règlement."
+- Si une règle correspond, retourne UNIQUEMENT un JSON valide sous la forme :
 
-        Réponse :
-    """)
+{{
+  "status": "<Statut associé dans le règlement>",
+  "message": "<Résumé clair de la règle appliquée>"
+}}
+""")
 
 document_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, document_chain)
@@ -71,4 +76,11 @@ rag_chain = create_retrieval_chain(retriever, document_chain)
 
 def get_rag_response(query):
     response = rag_chain.invoke({"input": query})
-    return response["answer"]
+    answer = response["answer"].strip()
+
+    if answer.startswith(("```")):
+        answer = answer.replace("```json", "")
+        answer = answer.replace("```", "")
+        answer = answer.strip()
+
+    return json.loads(answer)
