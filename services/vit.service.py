@@ -1,10 +1,11 @@
 from fastapi import HTTPException, UploadFile
 
 from app.services.speech import transcribe
-from app.services.vision import analyze
-from app.services.rag import get_rag_response
+from app.services.image import analyze
+from rag import get_rag_response
 
-from validations import audioValidate, imagevalidate
+from validations.audioValidate import validate_audio
+from validations.imagevalidate import validate_image    
 
 
 async def process_ticket(
