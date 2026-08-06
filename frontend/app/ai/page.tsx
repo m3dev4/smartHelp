@@ -3,11 +3,27 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useRef, useState } from "react";
-import { Bot, CheckCircle2, FileText, ImageIcon, Loader, Mic, Paperclip, Scale, Send, Stethoscope } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Bot,
+  CheckCircle2,
+  FileText,
+  ImageIcon,
+  Loader,
+  Mic,
+  Paperclip,
+  Scale,
+  Send,
+  Stethoscope,
+} from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import Attachement from "@/components/attachement";
 import { useSupportTicket } from "@/hooks/useTicket";
 import ResultRow from "@/components/resultRow";
+import TypingWritter from "@/components/typingWritter";
 
 const Support = () => {
   const audioRef = useRef<HTMLInputElement>(null);
@@ -54,7 +70,11 @@ const Support = () => {
                   </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-64 p-2 flex flex-col gap-1" align="start" side="top">
+                <PopoverContent
+                  className="w-64 p-2 flex flex-col gap-1"
+                  align="start"
+                  side="top"
+                >
                   <Attachement
                     icon={<Mic className="size-4 text-rose-500" />}
                     title="Audio"
@@ -68,8 +88,20 @@ const Support = () => {
                     onClick={() => imageRef.current?.click()}
                   />
 
-                  <input ref={audioRef} type="file" accept="audio/mp3,audio/wav,audio/*" className="hidden" onChange={handleAudioSelect} />
-                  <input ref={imageRef} type="file" accept="image/png,image/jpeg,image/*" className="hidden" onChange={handleImageSelect} />
+                  <input
+                    ref={audioRef}
+                    type="file"
+                    accept="audio/mp3,audio/wav,audio/*"
+                    className="hidden"
+                    onChange={handleAudioSelect}
+                  />
+                  <input
+                    ref={imageRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/*"
+                    className="hidden"
+                    onChange={handleImageSelect}
+                  />
                 </PopoverContent>
               </Popover>
 
@@ -87,7 +119,11 @@ const Support = () => {
                 onClick={handleData}
                 disabled={supportMutateTicket.isPending}
               >
-                {supportMutateTicket.isPending ? <Loader className="size-4 animate-spin" /> : <Send className="size-4" />}
+                {supportMutateTicket.isPending ? (
+                  <Loader className="size-4 animate-spin" />
+                ) : (
+                  <Send className="size-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -98,28 +134,52 @@ const Support = () => {
             <div className=" backdrop-blur-sm rounded-2xl shadow-xl p-6 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
                 <CheckCircle2 className="size-5 text-emerald-500" />
-                <h3 className="font-semibold text-slate-100">Résultat de l'analyse</h3>
+                <h3 className="font-semibold text-slate-100">
+                  Résultat de l'analyse
+                </h3>
               </div>
 
               <ResultRow
                 icon={<FileText className="size-4 text-blue-500" />}
                 label="Transcription"
-                value={supportMutateTicket.data?.transcription}
+                value={
+                  <TypingWritter
+                    texte={supportMutateTicket.data?.transcription || ""}
+                    speed={20}
+                  />
+                }
               />
               <ResultRow
                 icon={<ImageIcon className="size-4 text-emerald-500" />}
                 label="Image"
-                value={supportMutateTicket.data?.defect_detected?.type}
+                value={
+                  <TypingWritter
+                    texte={
+                      supportMutateTicket.data?.defect_detected?.type || ""
+                    }
+                    speed={20}
+                  />
+                }
               />
               <ResultRow
                 icon={<Scale className="size-4 text-amber-500" />}
                 label="Règlement intérieur"
-                value={supportMutateTicket.data?.policy_rule_applied}
+                value={
+                  <TypingWritter
+                    texte={supportMutateTicket.data?.policy_rule_applied || ""}
+                    speed={20}
+                  />
+                }
               />
               <ResultRow
                 icon={<Stethoscope className="size-4 text-rose-500" />}
                 label="Diagnostic"
-                value={supportMutateTicket.data?.diagnostic_status}
+                value={
+                  <TypingWritter
+                    texte={supportMutateTicket.data?.diagnostic_status || ""}
+                    speed={20}
+                  />
+                }
               />
             </div>
           </div>

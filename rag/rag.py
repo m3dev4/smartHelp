@@ -53,8 +53,12 @@ Contexte :
 Réclamation :
 {input}
 
+Preuve photo :
+{photo_evidence}
+
 Consignes :
 - Réponds uniquement avec les informations du contexte.
+- IMPORTANT : Si aucune photo de preuve n'a été fournie ("Aucune photo fournie"), le statut doit TOUJOURS être "À vérifier" avec un message demandant au client de fournir une photo.
 - Si aucune règle ne correspond, réponds :
 
 {{
@@ -62,7 +66,7 @@ Consignes :
   "message": "Information introuvable dans le règlement."
 }}
 
-- Si une règle correspond, retourne UNIQUEMENT un JSON valide sous la forme :
+- Si une règle correspond ET qu'une photo de preuve a été fournie, retourne UNIQUEMENT un JSON valide sous la forme :
 
 {{
   "status": "<Statut associé dans le règlement>",
@@ -74,8 +78,13 @@ document_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, document_chain)
 
 
-def get_rag_response(query):
-    response = rag_chain.invoke({"input": query})
+def get_rag_response(query, image_classification=None):
+    if image_classification:
+        photo_evidence = f"Photo fournie — Analyse : {json.dumps(image_classification, ensure_ascii=False)}"
+    else:
+        photo_evidence = "Aucune photo fournie"
+
+    response = rag_chain.invoke({"input": query, "photo_evidence": photo_evidence})
     answer = response["answer"].strip()
 
     if answer.startswith(("```")):

@@ -1,4 +1,4 @@
-function ResultRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string }) {
+function ResultRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string | React.ReactNode }) {
   if (!value) return null;
 
   return (
