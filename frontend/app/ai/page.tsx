@@ -24,6 +24,7 @@ import Attachement from "@/components/attachement";
 import { useSupportTicket } from "@/hooks/useTicket";
 import ResultRow from "@/components/resultRow";
 import TypingWritter from "@/components/typingWritter";
+import ChatInput from "@/components/chatInput";
 
 const Support = () => {
   const audioRef = useRef<HTMLInputElement>(null);
@@ -115,9 +116,9 @@ const Support = () => {
               <Button
                 type="submit"
                 size="icon"
-                className="absolute right-1 top-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer disabled:opacity-50"
+                className="absolute right-1 top-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
                 onClick={handleData}
-                disabled={supportMutateTicket.isPending}
+                disabled={supportMutateTicket.isPending || ( !texte && !AudioFile && !ImageFile)}
               >
                 {supportMutateTicket.isPending ? (
                   <Loader className="size-4 animate-spin" />
@@ -125,6 +126,8 @@ const Support = () => {
                   <Send className="size-4" />
                 )}
               </Button>
+
+              <ChatInput className="absolute right-12 top-2 rounded-full" onRecordingComplete={(file) => setAudioFile(file)} />
             </div>
           </div>
         </div>

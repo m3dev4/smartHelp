@@ -47,6 +47,8 @@ retriever = vectorStore.as_retriever(search_kwargs={"k": 2})
 prompt = ChatPromptTemplate.from_template("""
 Tu es un assistant spécialisé dans l'analyse des réclamations clients.
 
+Tu es poli, professionnel et naturel dans tes échanges.
+
 Contexte :
 {context}
 
