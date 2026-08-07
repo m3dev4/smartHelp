@@ -1,5 +1,5 @@
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Mic, Pause } from "lucide-react";
 
@@ -12,11 +12,15 @@ const ChatInput = ({ className, onRecordingComplete }: ChatInputProps) => {
   const { isRecording, startRecording, stopRecording, audioLevel, audioFile } =
     useAudioRecorder();
 
+  // Use a ref for the callback to avoid triggering the effect on parent re-renders
+  const onCompleteRef = useRef(onRecordingComplete);
+  onCompleteRef.current = onRecordingComplete;
+
   useEffect(() => {
-    if (audioFile && onRecordingComplete) {
-      onRecordingComplete(audioFile);
+    if (audioFile && onCompleteRef.current) {
+      onCompleteRef.current(audioFile);
     }
-  }, [audioFile, onRecordingComplete]);
+  }, [audioFile]);
 
   const toggleRecording = () => {
     if (isRecording) {
@@ -51,3 +55,4 @@ const ChatInput = ({ className, onRecordingComplete }: ChatInputProps) => {
 };
 
 export default ChatInput;
+
